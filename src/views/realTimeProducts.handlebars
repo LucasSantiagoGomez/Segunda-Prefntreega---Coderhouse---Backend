@@ -1,0 +1,47 @@
+<div id="app">
+
+  <h1>Subir producto</h1>
+  <br />
+  <form id="addProductForm" enctype="multipart/form-data">
+    <label for="title">Titulo</label>
+    <input type="text" name="title" id="title" />
+    <br />
+    <label for="description">Descripcion</label>
+    <input type="text" name="description" id="description" />
+    <br />
+    <label for="price">Precio</label>
+    <input type="number" name="price" id="price" />
+    <br />
+    <label for="code">Codigo</label>
+    <input type="text" name="code" id="code" />
+    <br />
+    <label for="stock">Stock</label>
+    <input type="number" name="stock" id="stock" />
+     <br/>
+    <label for="thumbnails">Product Thumbnails</label>
+    
+    <input
+      type="file"
+      id="thumbnails"
+      name="thumbnails"
+      accept="image/*"
+      multiple
+    />
+    <br />
+    <button type="submit">Subir</button>
+    <button type="reset">Reiniciar</button>
+  </form>
+
+    <h3>Eliminar producto por id</h3>
+  <form id="deleteProductForm">
+    <label for="pid">ID del producto</label>
+    <input type="number" name="pid" id="pid" required/>
+    <button type="submit">Eliminar</button>
+  </form>
+
+  <h1>Lista de Productos</h1>
+  <div id="productsList"></div>
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
