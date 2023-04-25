@@ -1,0 +1,115 @@
+<div class="app" id="custom-target">
+	<div >
+		<div >
+			<div class="list-title">Lista de productos</div>
+		</div>
+		<div >
+			<div >
+					{{#if user.isAdmin}}
+				<div  class="add-btn btn">
+					<a href="/product">
+						<i class="fas fa-upload"></i>
+					</a>
+				</div>
+			{{/if}}
+			<div >
+				<div >
+					<p >Hola,
+						<span > {{user.first_name}}</span>
+					</p>
+				</div>
+		
+					</a>
+					<a id="{{user.email}}">
+					</a>
+				</div>
+			</div>
+		</div>
+				{{#each products}}
+					<div id="pid-{{this._id}}" >
+						<div >
+							<div >
+								<div >
+									{{this.title}}
+								</div>
+								<div>
+									Cod:
+									{{this.code}}
+								</div>
+							</div>
+							<div >
+								<div >
+									{{this.description}}
+								</div>
+							</div>
+							<div >
+								<div >
+									$
+									{{this.price}}
+								</div>
+								<div >
+									Categoría:
+									{{this.category}}
+								</div>
+								<div >
+									Stock:
+									{{this.stock}}
+									unidades
+								</div>
+							</div>
+						</div>
+						<div >
+							{{#each this.thumbnails}}
+								<div >
+									<img src="{{this}}" alt="" />
+								</div>
+							{{else}}
+								<div >Sin imágenes</div>
+							{{/each}}
+						</div>
+						<form
+							action="api/carts/6446d6fcecadebaeeb55649a/product/{{this._id}}"
+							method="POST"
+							id={{this._id}}
+							class="add-form"
+							enctype="multipart/form-data"
+						>
+							<button
+								type="submit"
+								form={{this._id}}
+								class="add-btn btn"
+								name="submit"
+							>Agregar</button>
+						</form>
+					</div>
+				{{/each}}
+			</div>
+		</div>
+		<div class="footer">
+			{{#if hasPrevPage}}
+				<div class="btn prev-btn">
+					<a href="?page={{prevPage}}">Prev</a>
+				</div>
+			{{else}}
+				<div class="invisible-btn">Prev</div>
+			{{/if}}
+			<div class="page-index">
+				<p>
+					Página
+					<b>{{page}}</b>
+					de
+					<b>{{totalPages}}</b>
+				</p>
+			</div>
+
+			{{#if hasNextPage}}
+				<div class="btn next-btn">
+					<a href="?page={{nextPage}}">Prox</a>
+				</div>
+			{{else}}
+				<div class="invisible-btn">Prox</div>
+			{{/if}}
+		</div>
+	</div>
+</div>
+<script src="../public/js/products.js"></script>

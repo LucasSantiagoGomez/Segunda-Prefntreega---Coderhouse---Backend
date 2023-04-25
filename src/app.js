@@ -1,100 +1,78 @@
-import productsrouter from './routes/products.router.js'
-import cartrouter from './routes/cart.router.js'
-import viewrouter from './routes/views.router.js'
-import handlebars from 'express-handlebars'
-import __dirname from './utils.js'
 import express from "express";
-import { Server } from 'socket.io';
-import socket from './socket.js';
+import handlebars from "express-handlebars";
+import morgan from "morgan";
+import database from "./db.js";
+import socket from "./socket.js";
+import productsRouter from "./routes/products.router.js";
+import cartsRouter from "./routes/cart.router.js";
+import viewsRouter from "./routes/views.router.js";
+import __dirname from "./utils.js";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import passport from "passport";
+import initializePassport from "./auth/passport.js";
+import sessionsRouter from "./routes/session.routes.js";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+import config from "./config.js";
 
-const productServer = express()
-productServer.use(express.json())
-productServer.use(express.urlencoded({extended:true}))
+
+// Initialization
+const { SESSION_SECRET } = config;
+const app = express();
+
+// Settings
+app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
 
 
-productServer.engine("handlebars",handlebars.engine());
+app.use(
+	express.json({
+		type: ["application/json", "text/plain"],
+	})
+);
+app.use(express.urlencoded({ extended: true }));
+app.use(
+	session({
+		store: MongoStore.create({
+			mongoUrl:  `mongodb+srv://lucas00gomez:jhVWUong4BKakOhh@clustercoderhouseecomme.itfiapq.mongodb.net/?retryWrites=true&w=majority`,
+			ttl: 60 * 5,
+		}),
+		resave: true,
+		saveUninitialized: false,
+		secret: SESSION_SECRET,
+	})
+);
 
-productServer.set("view engine","handlebars");
-productServer.set("views",`${__dirname}/views`);
-productServer.use("/api/products",productsrouter)
-productServer.use("/api/cart",cartrouter)
-productServer.use(express.static(`${__dirname}/public`));
-productServer.use("/",viewrouter)
 
+// Midlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use("/", express.static(`${__dirname}/public`));
+app.use(morgan("dev"));
 
-const httpServer=productServer.listen(8080, () => {
-  try {
-      console.log("Servidor arriba en el puerto 8080");
-  } catch (error) {
-      console.log(error);
-  }
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/", express.static(`${__dirname}/public`));
+app.use(morgan("dev"));
+
+// Database connection
+database.connect();
+
+// Routes
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartsRouter);
+app.use("/api/sessions", sessionsRouter);
+app.use("/", viewsRouter);
+
+const httpServer = app.listen(8080, (req, res) => {
+  console.log("Listening on port 8080");
 });
-socket.connect(httpServer)
 
-
-/*
-productServer.get("/products", async(req, res)=>{
-  
-    const consult = await manager.getProducts();
-    let limit = Number.parseInt(req.query.limit)
-
-    if(limit){
-      const result = consult.slice(0,limit);
-      res.send(result);
-    }else{
-      res.send(consult)
-    }
-  
-});
-
-productServer.get("/products/:pid",async(req, res)=>{
-  
-    let id = req.params.pid
-    console.log(id)
-    const consultId = await manager.getProductById(Number.parseInt(id));
-    if (!consultId){
-      return res.send({error:"Producto no encontrado"})
-    }else{
-      res.send(consultId);
-    }
-  
-});
-
-productServer.listen(8080,()=>{
-  console.log("Servidor arriba en el puerto 8080")
-})
+socket.connect(httpServer);
 
 
 
 
-
-
-/*const env = async () => {
-  let primerProducto = await manager.getProducts();
-  console.log(primerProducto);
-  
-  const product = {
-    title: "producto prueba",
-    description:"Este es un producto prueba",
-    price:200,
-    thumbnail:"Sin imagen",
-    code:"abc123",
-    stock:25,
-
-  }
-
-  let result = await manager.addProduct(product)
-  console.log(result)
-
-  let result2 = await manager.addProduct(product)
-  console.log(result2)
-
-    const changes = {
-        price:300,
-        stock:15,
-    }
-    await manager.updateProduct(2,changes)
-  
-}
-env()
-*/

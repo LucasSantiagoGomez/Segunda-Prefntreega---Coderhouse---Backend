@@ -4,7 +4,7 @@ import socket from "../../socket.js";
 
 export default class ProductManager {
     constructor() {
-      this.path = `${__dirname}/files/Products.json`;
+      this.path = `${__dirname}files/productos.json`;
     }
   
     getProducts = async () => {

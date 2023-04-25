@@ -1,43 +1,57 @@
 import { Router } from "express";
 import CartManager from "../dao/dbManagers/carts.js";
 
+const manager = new CartManager();
 
-const router = Router()
+const router = Router();
 
-const cartmanager = new CartManager();
+router.post("/", async (req, res) => {
+  const cart = req.body;
+  if (!cart) {
+    return res
+      .status(400)
+      .send({ status: "Error", error: "Cart could not be added" });
+  }
 
-router.post("/",async (req,res)=>{
-    try{
-        await cartmanager.addCart();
-        return res.status(201).send({
-            status:"success",
-            message:{
-                success:"carrito creado",
-            }
-        });
-    }catch(error){
-        console.log(error)
-    }
-})
+  const newCart = await manager.addCart(cart);
+  return res.send({
+    status: "OK",
+    message: "Cart added successfully",
+    payload: newCart,
+  });
+});
 
-router.get("/:cid",async (req,res)=>{
-    try {
-        const id = req.params.cid
-        const cart = await cartmanager.getCartById(id);
-        if (typeof(cart)==="string") {
-            return res.status(404).send({
-                status: "error",
-                message: { error:cart},
-            });
-        }
-    
-        return res.status(200).send({
-            status: "success",
-            message: { cart: cart },
-        });
-    } catch (error) {
-        console.log(error)
-    }
-})
+router.get("/:cid", async (req, res) => {
+  const cartId = req.params.cid;
+  const cart = await manager.getCartById(cartId);
+
+  if (!cart) {
+    return res.status(404).send({
+      status: "Error",
+      error: "cart was not found",
+    });
+  }
+  return res.send({ status: "OK", message: "Cart found", payload: cart });
+});
+
+router.post("/:cid/product/:pid", async (req, res) => {
+  const cartId = req.params.cid;
+  const productId = req.params.pid;
+
+  const { quantity } = req.body;
+
+  const newProduct = await manager.addProduct(cartId, productId, quantity);
+
+  if (!newProduct) {
+    return res
+      .status(404)
+      .send({ status: "Error", error: "Product could not be found" });
+  }
+  return res.send({
+    status: "OK",
+    message: "Product successfully added to the cart",
+    payload: newProduct,
+  });
+});
 
 export default router;

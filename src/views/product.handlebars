@@ -1,0 +1,40 @@
+<div class="app" id="custom-target">
+	<div >
+		<div >
+			<div >
+				<div >
+					<div >{{this.title}}</div>
+					<div > {{this.category}}</div>
+				</div>
+				<div >
+					<div >Cod: {{this.code}}</div>
+				</div>
+			</div>
+			<div >
+				<div >{{this.description}}</div>
+				<div >
+					<div >$ {{this.price}}</div>
+					<div >Stock: {{this.stock}} unidades</div>
+				</div>
+			</div>
+			<div >
+				
+				{{#each this.thumbnails}}
+					<div >
+						<img src="{{this}}" alt="" />
+					</div>
+				{{else}}
+					<div>Sin imágenes</div>
+				{{/each}}
+			</div>
+			<div >
+				<form id={{this._id}} class="add-form">
+					<button type="submit" form={{this._id}} class="add-btn btn">
+						Agregar
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="../public/js/product.js"></script>

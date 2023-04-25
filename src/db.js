@@ -7,7 +7,7 @@ const database = {
   connect: async () => {
     try {
       await mongoose.connect(
-        `mongodb+srv://${dbUser}:${dbPassword}lucas00gomez:jhVWUong4BKakOhh@cluster0.1k06imr.mongodb.net/${dbName}?retryWrites=true&w=majority`
+        `mongodb+srv://lucas00gomez:jhVWUong4BKakOhh@clustercoderhouseecomme.itfiapq.mongodb.net/?retryWrites=true&w=majority`
       );
     } catch (error) {
       console.log(error);
